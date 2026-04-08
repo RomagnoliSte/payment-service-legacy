@@ -16,16 +16,14 @@ export class PaymentService {
   private paymentFeeCalculator = new PaymentFeeCalculatorService();
   private paymentRepository = new PaymentRepository();
 
+  private processors = {
+    pix: new PixPaymentStrategy(),
+    credit_card: new CreditCardPaymentStrategy(),
+    boleto: new BoletoPaymentStrategy(),
+  };
+
   private getProcessor(method: PaymentMethod): PaymentProcessorStrategy {
-    if (method === "pix") {
-      return new PixPaymentStrategy();
-    }
-
-    if (method === "credit_card") {
-      return new CreditCardPaymentStrategy();
-    }
-
-    return new BoletoPaymentStrategy();
+    return this.processors[method];
   }
 
   createPayment(data: any): Payment {
