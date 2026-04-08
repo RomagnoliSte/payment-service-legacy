@@ -1,40 +1,46 @@
 import { PaymentRepository } from "../repositories/payment.repository.js";
-import type { Payment } from "../types/payment.js";
+import type {
+  Payment,
+  PaymentMethod,
+  PaymentStatus,
+} from "../types/payment.js";
 import { PaymentFeeCalculatorService } from "./payment-fee-calculator.service.js";
 import { PaymentValidatorService } from "./payment-validator.service.js";
+import { PixPaymentStrategy } from "../strategies/pix-payment.strategy.js";
+import { CreditCardPaymentStrategy } from "../strategies/credit-card-payment.strategy.js";
+import { BoletoPaymentStrategy } from "../strategies/boleto-payment.strategy.js";
+import type { PaymentProcessorStrategy } from "../strategies/payment-processor.strategy.js";
 
 export class PaymentService {
   private paymentValidator = new PaymentValidatorService();
   private paymentFeeCalculator = new PaymentFeeCalculatorService();
   private paymentRepository = new PaymentRepository();
 
+  private getProcessor(method: PaymentMethod): PaymentProcessorStrategy {
+    if (method === "pix") {
+      return new PixPaymentStrategy();
+    }
+
+    if (method === "credit_card") {
+      return new CreditCardPaymentStrategy();
+    }
+
+    return new BoletoPaymentStrategy();
+  }
+
   createPayment(data: any): Payment {
     this.paymentValidator.validate(data);
 
     const fee = this.paymentFeeCalculator.calculate(data.method, data.amount);
-
-    let status: "pending" | "approved" | "failed" = "pending";
-
-    if (data.method === "pix") {
-      status = "approved";
-      console.log("Processando pagamento via PIX...");
-      console.log(`Enviando confirmação para ${data.customerName}`);
-    } else if (data.method === "credit_card") {
-      status = "approved";
-      console.log("Processando pagamento via cartão...");
-      console.log(`Enviando confirmação para ${data.customerName}`);
-    } else if (data.method === "boleto") {
-      status = "pending";
-      console.log("Gerando boleto...");
-      console.log(`Enviando boleto para ${data.customerName}`);
-    }
+    const processor = this.getProcessor(data.method);
+    const result = processor.process(data.customerName);
 
     const payment: Payment = {
       id: crypto.randomUUID(),
       customerName: data.customerName,
       amount: data.amount,
       method: data.method,
-      status,
+      status: result.status as PaymentStatus,
       fee,
       createdAt: new Date(),
     };

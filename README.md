@@ -81,3 +81,19 @@ Nesta etapa, o projeto foi refatorado com foco no princípio da Responsabilidade
 - Melhor separação de responsabilidades
 - Código mais legível
 - Base mais preparada para novas refatorações
+
+## Etapa 2 — Refatoração com OCP
+
+Nesta etapa, o projeto foi evoluído com foco no princípio Open/Closed.
+
+### Alterações realizadas
+
+- Criação de estratégias específicas para cada método de pagamento
+- Separação da lógica de processamento por tipo
+- Redução do acoplamento dentro do `PaymentService`
+
+### Benefícios
+
+- Código mais extensível
+- Regras de cada pagamento isoladas
+- Menor impacto para adicionar novos métodos
