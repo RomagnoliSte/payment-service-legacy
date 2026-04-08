@@ -1,48 +1,32 @@
-import { payments } from "../data/payments";
-import { Payment } from "../types/payment";
+import { PaymentRepository } from "../repositories/payment.repository.js";
+import type { Payment } from "../types/payment.js";
+import { PaymentFeeCalculatorService } from "./payment-fee-calculator.service.js";
+import { PaymentValidatorService } from "./payment-validator.service.js";
 
 export class PaymentService {
+  private paymentValidator = new PaymentValidatorService();
+  private paymentFeeCalculator = new PaymentFeeCalculatorService();
+  private paymentRepository = new PaymentRepository();
+
   createPayment(data: any): Payment {
-    if (!data.customerName) {
-      throw new Error("Nome do cliente é obrigatório");
-    }
+    this.paymentValidator.validate(data);
 
-    if (!data.amount || data.amount <= 0) {
-      throw new Error("O valor deve ser maior que zero");
-    }
+    const fee = this.paymentFeeCalculator.calculate(data.method, data.amount);
 
-    let fee = 0;
     let status: "pending" | "approved" | "failed" = "pending";
 
     if (data.method === "pix") {
-      if (!data.pixKey) {
-        throw new Error("Chave PIX é obrigatória");
-      }
-
-      fee = data.amount * 0.01;
       status = "approved";
       console.log("Processando pagamento via PIX...");
       console.log(`Enviando confirmação para ${data.customerName}`);
     } else if (data.method === "credit_card") {
-      if (!data.cardNumber || !data.cardHolder || !data.cvv) {
-        throw new Error("Necerrário preencher todos os dados do cartão");
-      }
-
-      fee = data.amount * 0.05;
       status = "approved";
-      console.log("Processando pagamento via Cartão de Crédito...");
+      console.log("Processando pagamento via cartão...");
       console.log(`Enviando confirmação para ${data.customerName}`);
     } else if (data.method === "boleto") {
-      if (!data.cpf) {
-        throw new Error("Necessário CPF para gerar boleto");
-      }
-
-      fee = 2;
       status = "pending";
       console.log("Gerando boleto...");
       console.log(`Enviando boleto para ${data.customerName}`);
-    } else {
-      throw new Error("Método de pagamento inválido");
     }
 
     const payment: Payment = {
@@ -55,14 +39,14 @@ export class PaymentService {
       createdAt: new Date(),
     };
 
-    payments.push(payment);
+    this.paymentRepository.save(payment);
 
-    console.log("Pagamento registrado com sucesso!");
+    console.log("Pagamento salvo com sucesso");
 
     return payment;
   }
 
   listPayments(): Payment[] {
-    return payments;
+    return this.paymentRepository.findAll();
   }
 }

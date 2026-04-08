@@ -47,7 +47,7 @@ Esta versão apresenta diversas limitações:
 
 Este projeto será refatorado progressivamente aplicando os princípios SOLID:
 
-- [ ] SRP — Separação de responsabilidades
+- [✅] SRP — Separação de responsabilidades
 - [ ] OCP — Extensibilidade sem modificação
 - [ ] DIP — Inversão de dependência
 - [ ] Padronização de respostas da API
@@ -65,3 +65,19 @@ Este projeto será refatorado progressivamente aplicando os princípios SOLID:
 ## 📚 Contexto
 
 Este projeto faz parte de um estudo prático de arquitetura de software, com foco em evolução de código e boas práticas.
+
+## Etapa 1 — Refatoração com SRP
+
+Nesta etapa, o projeto foi refatorado com foco no princípio da Responsabilidade Única (SRP).
+
+### Alterações realizadas
+
+- Extração da validação para `PaymentValidatorService`
+- Extração do cálculo de taxas para `PaymentFeeCalculatorService`
+- Extração da persistência para `PaymentRepository`
+
+### Benefícios
+
+- Melhor separação de responsabilidades
+- Código mais legível
+- Base mais preparada para novas refatorações

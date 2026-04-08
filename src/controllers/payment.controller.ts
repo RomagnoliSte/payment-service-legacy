@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { PaymentService } from "../services/payment.service";
+import type { Request, Response } from "express";
+import { PaymentService } from "../services/payment.service.js";
 
 const paymentService = new PaymentService();
 
