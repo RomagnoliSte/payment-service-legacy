@@ -1,4 +1,6 @@
-export class PaymentValidatorService {
+import type { PaymentValidatorInterface } from "./payment-validator.interface.js";
+
+export class PaymentValidatorService implements PaymentValidatorInterface {
   validate(data: any): void {
     if (!data.customerName) {
       throw new Error("Nome do cliente é obrigatório");

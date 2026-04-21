@@ -1,4 +1,7 @@
-export class PaymentFeeCalculatorService {
+import type { PaymentMethod } from "../types/payment.js";
+import type { PaymentFeeCalculatorInterface } from "./payment-fee-calculator.interface.js";
+
+export class PaymentFeeCalculatorService implements PaymentFeeCalculatorInterface {
   calculate(method: string, amount: number): number {
     if (method === "pix") {
       return amount * 0.01;

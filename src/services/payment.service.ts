@@ -1,29 +1,25 @@
-import { PaymentRepository } from "../repositories/payment.repository.js";
-import type {
-  Payment,
-  PaymentMethod,
-  PaymentStatus,
-} from "../types/payment.js";
-import { PaymentFeeCalculatorService } from "./payment-fee-calculator.service.js";
-import { PaymentValidatorService } from "./payment-validator.service.js";
-import { PixPaymentStrategy } from "../strategies/pix-payment.strategy.js";
-import { CreditCardPaymentStrategy } from "../strategies/credit-card-payment.strategy.js";
-import { BoletoPaymentStrategy } from "../strategies/boleto-payment.strategy.js";
+import type { Payment, PaymentMethod } from "../types/payment.js";
+import type { PaymentRepositoryInterface } from "../repositories/payment-repository.interface.js";
+import type { PaymentValidatorInterface } from "./payment-validator.interface.js";
+import type { PaymentFeeCalculatorInterface } from "./payment-fee-calculator.interface.js";
 import type { PaymentProcessorStrategy } from "../strategies/payment-processor.strategy.js";
 
 export class PaymentService {
-  private paymentValidator = new PaymentValidatorService();
-  private paymentFeeCalculator = new PaymentFeeCalculatorService();
-  private paymentRepository = new PaymentRepository();
-
-  private processors = {
-    pix: new PixPaymentStrategy(),
-    credit_card: new CreditCardPaymentStrategy(),
-    boleto: new BoletoPaymentStrategy(),
-  };
+  constructor(
+    private paymentRepository: PaymentRepositoryInterface,
+    private paymentValidator: PaymentValidatorInterface,
+    private paymentFeeCalculator: PaymentFeeCalculatorInterface,
+    private processors: Record<PaymentMethod, PaymentProcessorStrategy>,
+  ) {}
 
   private getProcessor(method: PaymentMethod): PaymentProcessorStrategy {
-    return this.processors[method];
+    const processor = this.processors[method];
+
+    if (!processor) {
+      throw new Error("Processador de pagamento não encontrado");
+    }
+
+    return processor;
   }
 
   createPayment(data: any): Payment {
@@ -38,7 +34,7 @@ export class PaymentService {
       customerName: data.customerName,
       amount: data.amount,
       method: data.method,
-      status: result.status as PaymentStatus,
+      status: result.status,
       fee,
       createdAt: new Date(),
     };

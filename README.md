@@ -48,8 +48,8 @@ Esta versão apresenta diversas limitações:
 Este projeto será refatorado progressivamente aplicando os princípios SOLID:
 
 - [✅] SRP — Separação de responsabilidades
-- [ ] OCP — Extensibilidade sem modificação
-- [ ] DIP — Inversão de dependência
+- [✅] OCP — Extensibilidade sem modificação
+- [✅] DIP — Inversão de dependência
 - [ ] Padronização de respostas da API
 
 ---
@@ -97,3 +97,20 @@ Nesta etapa, o projeto foi evoluído com foco no princípio Open/Closed.
 - Código mais extensível
 - Regras de cada pagamento isoladas
 - Menor impacto para adicionar novos métodos
+
+## Etapa 3 — Refatoração com DIP
+
+Nesta etapa, o projeto foi refatorado com foco no princípio da Inversão de Dependência.
+
+### Alterações realizadas
+
+- Criação de contratos para repositório, validação e cálculo de taxa
+- Injeção de dependências no `PaymentService`
+- Remoção de dependências concretas dentro do serviço principal
+
+### Benefícios
+
+- Menor acoplamento
+- Maior flexibilidade para troca de implementações
+- Código mais testável
+- Arquitetura mais próxima de cenários reais
