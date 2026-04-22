@@ -6,6 +6,8 @@ import { PaymentFeeCalculatorService } from "../services/payment-fee-calculator.
 import { PixPaymentStrategy } from "../strategies/pix-payment.strategy.js";
 import { CreditCardPaymentStrategy } from "../strategies/credit-card-payment.strategy.js";
 import { BoletoPaymentStrategy } from "../strategies/boleto-payment.strategy.js";
+import { AppError } from "../errors/app-error.js";
+import { errorResponse, successResponse } from "../helpers/api-response.js";
 
 const paymentService = new PaymentService(
   new PaymentRepository(),
@@ -22,19 +24,23 @@ export class PaymentController {
   create(request: Request, response: Response) {
     try {
       const payment = paymentService.createPayment(request.body);
-      response.status(201).json(payment);
-    } catch (error) {
-      if (error instanceof Error) {
-        response.status(400).json({ message: error.message });
+      successResponse(response, payment, 201);
+    } catch (error: unknown) {
+      if (error instanceof AppError) {
+        errorResponse(response, error.message, error.statusCode);
         return;
       }
 
-      response.status(500).json({ message: "Internal server error" });
+      errorResponse(response, "Erro interno do servidor", 500);
     }
   }
 
-  list(_request: Request, response: Response) {
-    const payments = paymentService.listPayments();
-    response.json(payments);
+  list(_request: Request, response: Response): void {
+    try {
+      const payments = paymentService.listPayments();
+      successResponse(response, payments);
+    } catch {
+      errorResponse(response, "Erro interno do servidor", 500);
+    }
   }
 }

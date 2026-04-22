@@ -1,8 +1,9 @@
+import { AppError } from "../errors/app-error.js";
 import type { PaymentMethod } from "../types/payment.js";
 import type { PaymentFeeCalculatorInterface } from "./payment-fee-calculator.interface.js";
 
 export class PaymentFeeCalculatorService implements PaymentFeeCalculatorInterface {
-  calculate(method: string, amount: number): number {
+  calculate(method: PaymentMethod, amount: number): number {
     if (method === "pix") {
       return amount * 0.01;
     }
@@ -15,6 +16,6 @@ export class PaymentFeeCalculatorService implements PaymentFeeCalculatorInterfac
       return 2;
     }
 
-    throw new Error("Método de pagamento inválido");
+    throw new AppError("Método de pagamento inválido", 400);
   }
 }

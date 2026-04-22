@@ -114,3 +114,19 @@ Nesta etapa, o projeto foi refatorado com foco no princípio da Inversão de Dep
 - Maior flexibilidade para troca de implementações
 - Código mais testável
 - Arquitetura mais próxima de cenários reais
+
+## Etapa 4 — Padronização das respostas da API
+
+Nesta etapa, a API passou a responder com um formato padronizado para sucesso e erro.
+
+### Alterações realizadas
+
+- Criação da classe `AppError` para erros de negócio
+- Criação de helpers para respostas de sucesso e erro
+- Ajuste dos controllers para padronização de retorno
+
+### Benefícios
+
+- Respostas mais consistentes
+- Melhor experiência para consumo da API
+- Separação mais clara entre regra de negócio e camada HTTP

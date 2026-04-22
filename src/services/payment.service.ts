@@ -3,6 +3,7 @@ import type { PaymentRepositoryInterface } from "../repositories/payment-reposit
 import type { PaymentValidatorInterface } from "./payment-validator.interface.js";
 import type { PaymentFeeCalculatorInterface } from "./payment-fee-calculator.interface.js";
 import type { PaymentProcessorStrategy } from "../strategies/payment-processor.strategy.js";
+import { AppError } from "../errors/app-error.js";
 
 export class PaymentService {
   constructor(
@@ -16,7 +17,7 @@ export class PaymentService {
     const processor = this.processors[method];
 
     if (!processor) {
-      throw new Error("Processador de pagamento não encontrado");
+      throw new AppError("Processador de pagamento não encontrado", 400);
     }
 
     return processor;
