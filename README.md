@@ -50,7 +50,7 @@ Este projeto será refatorado progressivamente aplicando os princípios SOLID:
 - [✅] SRP — Separação de responsabilidades
 - [✅] OCP — Extensibilidade sem modificação
 - [✅] DIP — Inversão de dependência
-- [ ] Padronização de respostas da API
+- [✅] Padronização de respostas da API
 
 ---
 
